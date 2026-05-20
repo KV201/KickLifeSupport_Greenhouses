@@ -46,7 +46,7 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 - [Universal Storage 2](https://spacedock.info/mod/2960/Universal%20Storage%20II%20Finalized)
 - [System Heat](https://forum.kerbalspaceprogram.com/topic/193909-112x-systemheat-a-replacement-for-the-coreheat-system-july-21/)
 ## Known Bugs
-- None
+- Scrubber heat generation is currently much lower than intended due to a calculation bug. This will be fixed in a future update.
 ## Roadmap & Upcoming Features
 - UI for background processing
 - ~~Carbon Dioxide Removal Assembly (CDRA) - Instead of only using a LiOH scrubber, the CDRA will extract CO2 to allow for storage (or dumping overboard).~~ (DONE)

@@ -9,7 +9,8 @@
 ## Complex Systems
 | System   | Res 1 In      | Res 1 In Rate (L/s/seat) | Res 2 In         | Res 2 Rate (L/s/seat) | EC Rate (EC/s) | Resource Out | Out Rate (L/s/seat) | Thermal Flux (kW/seat) | Notes                |
 | -------- | ------------- | ------------------------ | ---------------- | --------------------- | -------------- | ------------ | ------------------- | ---------------------- | -------------------- |
-| Scrubber | CarbonDioxide | 0.005                    | LithiumHydroxide | 0.000015              | 0.05           | Waste        | 0.000015            | 0.25                   | EC rate is EC/s/seat |
+| Scrubber | CarbonDioxide | 0.005                    | LithiumHydroxide | 0.000015              | 0.05           | Waste        | 0.000015            | 0.02                   | EC rate is EC/s/seat |
+| CDRA     | CarbonDioxide | 0.005                    | N/A              | N/A                   | 0.5            | N/A          | N/A                 | 0.0075                 | EC rate is EC/s/seat |
 ## Electrical Systems
 | System          | EC Rate (EC/s) | Thermal Flux (kW) | Notes                                                                                 |
 | --------------- | -------------- | ----------------- | ------------------------------------------------------------------------------------- |
