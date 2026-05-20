@@ -62,3 +62,4 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 - DangIt! support
 - kOS support (Addon, thermal support)
 - MechJeb2 support (thermal)
+- Atmospheric equalization on nitrogen/oxygen surfaces
