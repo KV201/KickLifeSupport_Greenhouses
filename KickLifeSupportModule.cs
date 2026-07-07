@@ -314,7 +314,8 @@ namespace KickLifeSupport
 
             lsStatus = data.lsStatus;
             cabinCO2 = data.cabinCO2;
-            co2Level = (float)(cabinCO2 / (vessel.GetCrewCapacity() * airPerSeat));
+            double cabinVol = vessel.GetCrewCapacity() * airPerSeat;
+            co2Level = cabinVol > 0 ? (float)(cabinCO2 / cabinVol) : 0f;
             heatFlux = (float)totalFlux;
 
             Events["EqualizeAtmosphere"].active = vessel.atmDensity > 0
@@ -497,14 +498,29 @@ namespace KickLifeSupport
         [KSPEvent(guiActive = true, guiName = "Vent CO2 Overboard", groupName = "KICKLS", groupDisplayName = "Life Support")]
         public void VentCO2()
         {
+            double vented = 0;
+            if (co2Id < 0) return;
+            foreach (Part p in vessel.parts)
+            {
+                PartResource res = p.Resources.Get(co2Id);
+                if (res != null && res.amount > 0)
+                {
+                    vented += res.amount;
+                    res.amount = 0;
+                }
+            }
+            if (vented <= 0)
+            {
+                ScreenMessages.PostScreenMessage("No CO2 to vent.", 3f, ScreenMessageStyle.UPPER_CENTER);
+                return;
+            }
             if (KickLifeSupportScenario.Instance != null)
             {
                 LifeSupportStatus data = KickLifeSupportScenario.Instance.GetData(vessel.id);
-                double vented = data.cabinCO2;
                 data.cabinCO2 = 0;
-                cabinCO2 = 0;
-                ScreenMessages.PostScreenMessage($"Vented {vented:F1} L CO2 overboard", 3f, ScreenMessageStyle.UPPER_CENTER);
             }
+            cabinCO2 = 0;
+            ScreenMessages.PostScreenMessage($"Vented {vented:F1} L CO2 overboard", 3f, ScreenMessageStyle.UPPER_CENTER);
         }
         #endregion
 
