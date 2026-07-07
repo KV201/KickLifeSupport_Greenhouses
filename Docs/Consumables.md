@@ -7,15 +7,16 @@ Kerbals consume `Food` at a rate of 0.00002 L/s/kerb (0.072 L/hour/kerb; 0.432 L
 ## Water -> WasteWater
 Kerbals consume `Water` at a rate of 0.00003 L/s/kerb (0.108 L/hour/kerb; 0.648 L/day/kerb). `Water` is digested into `WasteWater`, which is collected in an onboard tank. `WasteWater` can be pumped out to a disposal spacecraft or released into space via an `FTE-1 Drain Valve` or similar.
 ## Greenhouses
-Greenhouses convert `WasteWater + CO₂ + EC → O₂ + Food + Water`. All types use the same input rates but produce different outputs by tier. Effective output = `baseRate × (1 + (crewCount - 1) × efficiency)`.
+Greenhouses convert `WasteWater + CO₂ + EC → O₂ + Food + Water`. Output is flat (no crew scaling) and scales by part size.
 
-| Tier | Part | Type | Efficiency | O₂ out | Food out | Water out |
-| ---- | ---- | ---- | ---------- | ------ | -------- | --------- |
-| 1 | KPBS Greenhouse, SSPX greenhouse-* | Greenhouse | 1.2×/crew | 0.0045 | 0.00005 | 0.00005 |
-| 2 | SSPX cupola-greenhouse-* | Hydroponics | 1.6×/crew | 0.006 | 0.00008 | 0.00008 |
-| 3 | SSPX aquaculture-* | Aquaculture | 2.0×/crew | 0.005 | **0.00012** | 0.00006 |
-| 4 | SSPX dome-greenhouse-* | Aeroponics | 2.5×/crew | **0.008** | **0.00010** | **0.00010** |
-## Water Purifier
+| Size | O₂ (L/s) | Food (L/s) | Water (L/s) | Kerbals Supported |
+| ---- | -------- | ---------- | ----------- | ----------------- |
+| Small (1.25m) | 0.01 | 0.00004 | 0.00006 | ~2 |
+| Medium (2.5m) | **0.02** | 0.00008 | 0.00012 | **4** |
+| Large (3.75m) | 0.03 | 0.00012 | 0.00018 | ~6 |
+| XL (5m) | 0.04 | 0.00016 | 0.00024 | ~8 |
+
+All greenhouse parts include a CDRA scrubber.
 The KPBS Water Purifier container (`KKAOSS_LS_container_waterpurifier`) converts `WasteWater` back into `Water` using EC. Purification rate is 0.000045 L/s Water output from 0.00005 L/s WasteWater + 0.05 EC/s input.
 ## Oxygen -> CarbonDioxide
 Kerbals consume `Oxygen` at a rate of 0.005 L/s/kerb (18 L/hour/kerb; 108 L/day/kerb). Kerbals expel `CarbonDioxide` into the cabin air where it will build up over time. Kerbals produce CO2 at a rate of 0.0041 L/s/kerb (14.76 L/hour/kerb; 88.56 L/day/seat). The scrubber system extracts `CarbonDioxide` from the cabin air and consumes `LithiumHydroxide` in the process, or uses the CDRA zeolite beds (hardware parts only). See the [[Cabin Air System]] for more details.

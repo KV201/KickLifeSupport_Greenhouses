@@ -54,9 +54,6 @@ namespace KickLifeSupport
         [KSPField(guiActive = true, guiActiveEditor = false, guiName = "Scrubber Status", groupName = "KICKLS", groupDisplayName = "Life Support")]
         public string scrubberStatus = "On";
 
-        [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Crew Efficiency", groupName = "KICKLS", groupDisplayName = "Life Support", guiFormat = "F2")]
-        public float greenhouseEfficiencyPerCrew = 0f;
-
         [KSPField(isPersistant = true, guiActive = true, guiName = "CDRA Beds", groupName = "KICKLS", groupDisplayName = "Life Support", guiFormat = "P0")]
         public float cdraSaturation = 0f;
 
@@ -225,20 +222,6 @@ namespace KickLifeSupport
             if (crewCount > 0 && KickLifeSupportScenario.Instance != null)
             {
                 totalFlux += (crewCount * KickLifeSupportScenario.Instance.kerbalHeat);
-            }
-
-            // Crew efficiency scaling — uses part crew for crewed parts,
-            // vessel-wide crew for uncrewed processor parts.
-            int effCrewCount = crewCount;
-            if (effCrewCount == 0) effCrewCount = vessel.GetCrewCount();
-
-            if (greenhouseEfficiencyPerCrew > 0f && effCrewCount > 0)
-            {
-                float bonus = (effCrewCount - 1) * greenhouseEfficiencyPerCrew;
-                foreach (ModuleResourceConverter conv in part.FindModulesImplementing<ModuleResourceConverter>())
-                {
-                    conv.EfficiencyBonus = bonus;
-                }
             }
 
             // Emergency Oxygen Reserve

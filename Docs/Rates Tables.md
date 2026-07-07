@@ -38,51 +38,25 @@
 ## CO₂ Vent Valve
 Instantly vents all cabin CO₂. No resource cost.
 
-## Greenhouse Systems (Per-Kerbal Baseline)
-All greenhouse types share the same inputs. Outputs and crew efficiency vary by tier.
+## Greenhouse Systems
+All greenhouses share the same inputs. Output is flat (no crew scaling) and scales by part size.
 
-### Input (all tiers)
+### Input (all sizes)
 | Resource | Rate (L/s) |
 | -------- | ---------- |
 | WasteWater | 0.00005 |
 | CarbonDioxide | 0.005 |
 | ElectricCharge | 0.02 |
 
-### Output by Tier
-| Tier | Part | Type | Efficiency | O₂ (L/s) | Food (L/s) | Water (L/s) |
-| ---- | ---- | ---- | ---------- | -------- | ---------- | ----------- |
-| 1 | KPBS Greenhouse, SSPX greenhouse-* | Greenhouse | 1.2× | 0.0045 | 0.00005 | 0.00005 |
-| 2 | SSPX cupola-greenhouse-* | Hydroponics | 1.6× | 0.006 | 0.00008 | 0.00008 |
-| 3 | SSPX aquaculture-* | Aquaculture | 2.0× | 0.005 | **0.00012** | 0.00006 |
-| 4 | SSPX dome-greenhouse-* | Aeroponics | 2.5× | 0.008 | 0.0001 | 0.0001 |
+### Output by Size
+| Size | Part Diameter | Parts | O₂ (L/s) | Food (L/s) | Water (L/s) | Kerbals Supported |
+| ---- | ------------- | ----- | -------- | ---------- | ----------- | ----------------- |
+| Small | 1.25m | cupola greenhouse | 0.01 | 0.00004 | 0.00006 | ~2 |
+| Medium | 2.5m | greenhouse, KKAOSS Greenhouse | **0.02** | 0.00008 | 0.00012 | **4** |
+| Large | 3.75m | greenhouse, aquaculture | 0.03 | 0.00012 | 0.00018 | ~6 |
+| Extra-Large | 5m | greenhouse, dome greenhouse | 0.04 | 0.00016 | 0.00024 | ~8 |
 
-### Crew Efficiency
-| Type | Crew Efficiency |
-| ---- | --------------- |
-| **Greenhouse** | 1.2× per crew |
-| **Hydroponics** | 1.6× per crew |
-| **Aquaculture** | 2.0× per crew |
-| **Aeroponics** | 2.5× per crew |
-
-The effective output rate is `baseRate × (1 + (crewCount - 1) × crewEfficiency)`.
-
-### Example Output Scaling (Tier 1 Greenhouse)
-| Crew | O₂ effective | Food effective | Water effective | Kerbals supported (O₂) |
-| ---- | ------------ | -------------- | --------------- | ---------------------- |
-| 1 | 0.0045 | 0.00005 | 0.00005 | 0.9 |
-| 2 | 0.0099 | 0.00011 | 0.00011 | **2.0** |
-| 3 | 0.0184 | 0.00020 | 0.00020 | **3.7** |
-| 4 | 0.0299 | 0.00033 | 0.00033 | **6.0** |
-
-### Example Output Scaling (Tier 4 Aeroponics)
-| Crew | O₂ effective | Food effective | Water effective | Kerbals supported (O₂) |
-| ---- | ------------ | -------------- | --------------- | ---------------------- |
-| 1 | 0.008 | 0.0001 | 0.0001 | 1.6 |
-| 2 | 0.028 | 0.00035 | 0.00035 | **5.6** |
-| 3 | 0.068 | 0.00085 | 0.00085 | **13.6** |
-| 4 | 0.148 | 0.00185 | 0.00185 | **29.6** |
-
-All greenhouse parts include a CDRA scrubber.
+Output is flat — does not scale with crew count. All greenhouse parts include a CDRA scrubber.
 
 ## Electrical Systems
 | System          | EC Rate (EC/s) | Thermal Flux (kW) | Notes                                                                                 |
