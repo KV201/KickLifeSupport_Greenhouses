@@ -15,12 +15,12 @@ graph TB
     end
 
     subgraph Hardware["⚙Hardware"]
-        CDRA[CDRA Scrubber<br/>EC → CO₂ capture<br/>Zeolite beds saturate]
-        LiOHScrub[LiOH Scrubber<br/>LiOH + CO₂ → Waste<br/>Cartridge replacement]
+        CDRA[CDRA Scrubber<br/>EC → CO2 capture<br/>Zeolite beds saturate]
+        LiOHScrub[LiOH Scrubber<br/>LiOH + CO2 → Waste<br/>Cartridge replacement]
         H2OPurifier[Water Purifier<br/>WasteWater + EC → Water]
-        Greenhouse[Greenhouse<br/>WasteWater + CO₂ + EC<br/>→ O₂ + Food + Water<br/>Tiers: 1.2/1.6/2.0/2.5× crew]
-        CO2Vent[CO₂ Vent Valve<br/>Button: dump CO₂ overboard]
-        EmergO2[Emergency O₂ Reserve<br/>Toggle: release stored O₂]
+        Greenhouse[Greenhouse<br/>WasteWater + CO2 + EC<br/>→ O2 + Food + Water<br/>Tiers: 1.2/1.6/2.0/2.5× crew]
+        CO2Vent[CO2 Vent Valve<br/>Button: dump CO2 overboard]
+        EmergO2[Emergency O2 Reserve<br/>Toggle: release stored O2]
         AirFilter[Air Filter<br/>Degrades with use<br/>Replace with EC]
     end
 

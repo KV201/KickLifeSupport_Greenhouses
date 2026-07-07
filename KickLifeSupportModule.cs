@@ -494,7 +494,7 @@ namespace KickLifeSupport
         #endregion
 
         #region CO2 Vent Valve
-        [KSPEvent(guiActive = true, guiName = "Vent CO₂ Overboard", groupName = "KICKLS", groupDisplayName = "Life Support")]
+        [KSPEvent(guiActive = true, guiName = "Vent CO2 Overboard", groupName = "KICKLS", groupDisplayName = "Life Support")]
         public void VentCO2()
         {
             if (KickLifeSupportScenario.Instance != null)
@@ -503,13 +503,13 @@ namespace KickLifeSupport
                 double vented = data.cabinCO2;
                 data.cabinCO2 = 0;
                 cabinCO2 = 0;
-                ScreenMessages.PostScreenMessage($"Vented {vented:F1} L CO₂ overboard", 3f, ScreenMessageStyle.UPPER_CENTER);
+                ScreenMessages.PostScreenMessage($"Vented {vented:F1} L CO2 overboard", 3f, ScreenMessageStyle.UPPER_CENTER);
             }
         }
         #endregion
 
         #region Emergency Oxygen Reserve
-        [KSPField(guiActive = true, guiActiveEditor = true, guiName = "Emergency O₂", groupName = "KICKLS", groupDisplayName = "Life Support")]
+        [KSPField(guiActive = true, guiActiveEditor = true, guiName = "Emergency O2", groupName = "KICKLS", groupDisplayName = "Life Support")]
         [UI_Toggle(disabledText = "Standby", enabledText = "Active")]
         public bool emergencyO2Enabled = false;
 

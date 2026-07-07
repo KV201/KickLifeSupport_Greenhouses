@@ -29,14 +29,14 @@
 | ------------ | --------- | ------ | ------------ | ------- |
 | WasteWater   | 0.00005   | Water  | 0.000045 L/s | 0.05 EC/s |
 
-## Emergency O₂ Reserve
+## Emergency O2 Reserve
 | Parameter   | Value         |
 | ----------- | ------------- |
 | Reserve Size | 100 L (default) |
 | Release Rate | 0.005 L/s/kerb |
 
-## CO₂ Vent Valve
-Instantly vents all cabin CO₂. No resource cost.
+## CO2 Vent Valve
+Instantly vents all cabin CO2. No resource cost.
 
 ## Greenhouse Systems
 All greenhouses share the same inputs. Output is flat (no crew scaling) and scales by part size.
@@ -49,7 +49,7 @@ All greenhouses share the same inputs. Output is flat (no crew scaling) and scal
 | ElectricCharge | 0.02 |
 
 ### Output by Size
-| Size | Part Diameter | Parts | O₂ (L/s) | Food (L/s) | Water (L/s) | Kerbals Supported |
+| Size | Part Diameter | Parts | O2 (L/s) | Food (L/s) | Water (L/s) | Kerbals Supported |
 | ---- | ------------- | ----- | -------- | ---------- | ----------- | ----------------- |
 | Small | 1.25m | cupola greenhouse | 0.01 | 0.00004 | 0.00006 | ~2 |
 | Medium | 2.5m | greenhouse, KKAOSS Greenhouse | **0.02** | 0.00008 | 0.00012 | **4** |
