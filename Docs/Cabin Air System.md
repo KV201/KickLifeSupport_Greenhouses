@@ -4,6 +4,10 @@ This article is intended to give a detailed breakdown of the cabin air system in
 - Cabin Air Simulation
 - CO2 Concentration
 - LiOH Scrubber
+- CDRA Scrubber (Zeolite)
+- Air Filter
+- Emergency O₂ Reserve
+- CO₂ Vent Valve
 - Climate Control 
 	- Circulation Fans
 	- Thermal Control
@@ -15,6 +19,32 @@ The cabin air volume is used to calculate CO2 concentration as a percentage of t
 One important note is CO2 is distributed evenly throughout all occupiable spaces. When your ship docks with an space station, any air onboard mixes with air from the station. If there is a lot of CO2 on the space station, it will "infect" your ship air, and your scrubber will have to work to remove the CO2.
 ## LiOH Scrubber
 Each cabin takes a standard LiOH Cartridge, containing 0.5 Liters of `LithiumHydroxide`. You should bring as many LiOH Cartridges as you think you'll need; store them in the pod's inventory. One cartridge is good for 1 Kerbal for 9.25 hours, 2 Kerbals for 4.63 hours, or 3 Kerbals for 3 hours. The scrubber uses a fan to draw air through the cartridge, which uses up `LithiumHydroxide` and removes `CarbonDioxide` from the cabin air. The fan uses EC, and the reaction generates heat (simulated) and water (in the form of humidity, not simulated yet). When a cartridge runs dry, you can reload the cartridge using the `Reload Scrubber` button on the pod's Part Window.
+## CDRA Scrubber
+The Carbon Dioxide Removal Assembly (CDRA) uses zeolite beds to capture CO₂ without consumable cartridges. Instead of replacing LiOH, the CDRA beds saturate over time (~1 hour of continuous operation per crew). When saturated, the module stops scrubbing and shows "Saturated" status.
+
+You can start a **Regeneration Cycle** via the Part Action Window button. Regeneration consumes 2.5 EC/s and takes ~5 minutes to purge the beds, resetting saturation to 0%. The module is unavailable for scrubbing during regeneration.
+### Saturation Rate
+| Crew | Time to Saturate |
+| ---- | ---------------- |
+| 1    | ~59 min          |
+| 2    | ~30 min          |
+| 3    | ~20 min          |
+### Regeneration
+| Parameter       | Value  |
+| --------------- | ------ |
+| EC Draw         | 2.5 EC/s |
+| Duration        | ~5 min |
+| Progress field  | Regen Xs remaining |
+## Air Filter
+Each scrubber (LiOH or CDRA) includes a replaceable air filter that degrades slowly during operation. When the filter condition reaches 0%, scrubber effectiveness is reduced. Use the "Replace Air Filter" button (costs 0.5 EC) to install a fresh filter.
+| Parameter     | Value         |
+| ------------- | ------------- |
+| Degrade Rate  | 0.00005/s/crew |
+| Lifetime (1 crew) | ~5.5 hours |
+## Emergency O₂ Reserve
+A toggleable Emergency O₂ Reserve stores a supply of breathable Oxygen independent of the main tank. When enabled, it releases O₂ directly into the vessel at 0.005 L/s/kerb until depleted. The reserve holds 100 L by default on all LS-equipped parts.
+## CO₂ Vent Valve
+The "Vent CO₂ Overboard" button instantly dumps all cabin CO₂ into space. Useful for emergencies or when your scrubber is offline.
 ## Climate Control
 The Climate Control system includes two main parts: the air circulation fans, and the thermal control system.
 ### Circulation Fans

@@ -59,6 +59,12 @@ namespace KickLifeSupport
         // EC Rates
         float scrubberECRequestRate;
 
+        // CDRA constants
+        const float cdraSaturationRate = 0.00028f;
+        const float cdraRegenRate = 0.0033f;
+        const float cdraRegenEC = 2.5f;
+        const float filterDegradeRate = 0.00005f;
+
         // Grace Periods
         float graceO2;
         float graceWater;
@@ -475,6 +481,11 @@ namespace KickLifeSupport
 
                     if (m.isCDRA)
                     {
+                        if (m.cdraSaturation >= 1f || m.regenProgress > 0f)
+                        {
+                            m.scrubberStatus = "Saturated";
+                            continue;
+                        }
                         double scrubAmount = baseScrubRate * partCapacity;
                         totalCDRARemoved += scrubAmount;
                         ProduceResource(v, co2Id, scrubAmount);
@@ -504,20 +515,22 @@ namespace KickLifeSupport
             {
                 foreach (ProtoPartSnapshot p in v.protoVessel.protoPartSnapshots)
                 {
+                    ProtoPartModuleSnapshot lsMod = null;
                     bool isScrubberOn = false;
                     bool isCDRA = false;
+                    float cdraSaturation = 0f;
+                    float regenProgress = 0f;
                     foreach (ProtoPartModuleSnapshot m in p.modules)
                     {
                         if (m.moduleName == "KickLifeSupportModule")
                         {
+                            lsMod = m;
                             if (bool.TryParse(m.moduleValues.GetValue("scrubberEnabled"), out bool val) && val)
-                            {
                                 isScrubberOn = true;
-                            }
                             if (bool.TryParse(m.moduleValues.GetValue("isCDRA"), out bool val2) && val2)
-                            {
                                 isCDRA = val2;
-                            }
+                            float.TryParse(m.moduleValues.GetValue("cdraSaturation"), out cdraSaturation);
+                            float.TryParse(m.moduleValues.GetValue("regenProgress"), out regenProgress);
                         }
                     }
 
@@ -528,7 +541,30 @@ namespace KickLifeSupport
                         partCapacity = p.partInfo.partPrefab.CrewCapacity;
                     if (partCapacity == 0) partCapacity = 1;
 
-                    double ecReq = isCDRA ? 
+                    if (isCDRA && regenProgress > 0f)
+                    {
+                        double regenEC = cdraRegenEC * partCapacity * deltaTime;
+                        (double consumed, double ratio) ecRegen = ConsumeResource(v, electricChargeId, regenEC);
+                        if (ecRegen.ratio >= 0.99)
+                        {
+                            regenProgress -= (float)(cdraRegenRate * deltaTime);
+                            if (regenProgress <= 0f)
+                            {
+                                regenProgress = 0f;
+                                cdraSaturation = 0f;
+                            }
+                            if (lsMod != null)
+                            {
+                                lsMod.moduleValues.SetValue("regenProgress", regenProgress.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
+                                lsMod.moduleValues.SetValue("cdraSaturation", cdraSaturation.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
+                            }
+                        }
+                        continue;
+                    }
+
+                    if (isCDRA && cdraSaturation >= 1f) continue;
+
+                    double ecReq = isCDRA ?
                         baseCdraEcRate * partCapacity :
                         baseEcRate * partCapacity;
                     (double amountConsumed, double ratio) ecRes = ConsumeResource(v, electricChargeId, ecReq);
@@ -537,10 +573,14 @@ namespace KickLifeSupport
                     if (isCDRA)
                     {
                         double scrubAmount = baseScrubRate * partCapacity;
-                        
                         totalCDRARemoved += (baseScrubRate * partCapacity);
                         ProduceResource(v, co2Id, scrubAmount);
                         activeCDRACount++;
+
+                        cdraSaturation += (float)(cdraSaturationRate * partCapacity * deltaTime);
+                        if (cdraSaturation > 1f) cdraSaturation = 1f;
+                        if (lsMod != null)
+                            lsMod.moduleValues.SetValue("cdraSaturation", cdraSaturation.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
                     }
                     else
                     {
@@ -608,7 +648,17 @@ namespace KickLifeSupport
                         }
                     }
 
-                    
+                    // Air filter degradation in unloaded vessels
+                    if (lsMod != null)
+                    {
+                        float filterCondition = 1f;
+                        string filterStr = lsMod.moduleValues.GetValue("filterCondition");
+                        if (!string.IsNullOrEmpty(filterStr))
+                            float.TryParse(filterStr, out filterCondition);
+                        filterCondition -= filterDegradeRate * partCapacity * (float)deltaTime;
+                        if (filterCondition < 0f) filterCondition = 0f;
+                        lsMod.moduleValues.SetValue("filterCondition", filterCondition.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
+                    }
                 }
             }
 
