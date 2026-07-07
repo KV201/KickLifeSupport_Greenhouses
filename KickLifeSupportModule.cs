@@ -25,6 +25,7 @@ namespace KickLifeSupport
         int liohId = -1;
         int ecId = -1;
         int o2Id = -1;
+        int co2Id = -1;
         #endregion
 
         /// <summary>
@@ -52,6 +53,23 @@ namespace KickLifeSupport
 
         [KSPField(guiActive = true, guiActiveEditor = false, guiName = "Scrubber Status", groupName = "KICKLS", groupDisplayName = "Life Support")]
         public string scrubberStatus = "On";
+
+        [KSPField(guiActive = false, guiActiveEditor = true, guiName = "Crew Efficiency", groupName = "KICKLS", groupDisplayName = "Life Support", guiFormat = "F2")]
+        public float greenhouseEfficiencyPerCrew = 0f;
+
+        [KSPField(isPersistant = true, guiActive = true, guiName = "CDRA Beds", groupName = "KICKLS", groupDisplayName = "Life Support", guiFormat = "P0")]
+        public float cdraSaturation = 0f;
+
+        [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Air Filter", groupName = "KICKLS", groupDisplayName = "Life Support", guiFormat = "P0")]
+        public float filterCondition = 1f;
+
+        [KSPField(isPersistant = true, guiActive = false)]
+        public float regenProgress = 0f;
+
+        public const float cdraSaturationRate = 0.00028f;
+        public const float cdraRegenRate = 0.0033f;
+        public const float cdraRegenEC = 2.5f;
+        public const float filterDegradeRate = 0.00005f;
         #endregion
 
         public override void OnStart(StartState state)
@@ -66,6 +84,8 @@ namespace KickLifeSupport
             if (ecDef != null) ecId = ecDef.id;
             PartResourceDefinition o2Def = PartResourceLibrary.Instance.GetDefinition("Oxygen");
             if (o2Def != null) o2Id = o2Def.id;
+            PartResourceDefinition co2Def = PartResourceLibrary.Instance.GetDefinition("CarbonDioxide");
+            if (co2Def != null) co2Id = co2Def.id;
 
             if (HighLogic.LoadedSceneIsFlight)
             {
@@ -91,6 +111,9 @@ namespace KickLifeSupport
                     Events["ReloadScrubber"].guiActive = !isCDRA;
                 };
             }
+
+            Events["RegenerateCDRA"].active = isCDRA;
+            Events["RegenerateCDRA"].guiActive = isCDRA;
         }
 
         public void FixedUpdate()
@@ -203,6 +226,79 @@ namespace KickLifeSupport
             {
                 totalFlux += (crewCount * KickLifeSupportScenario.Instance.kerbalHeat);
             }
+
+            // Crew efficiency scaling — uses part crew for crewed parts,
+            // vessel-wide crew for uncrewed processor parts.
+            int effCrewCount = crewCount;
+            if (effCrewCount == 0) effCrewCount = vessel.GetCrewCount();
+
+            if (greenhouseEfficiencyPerCrew > 0f && effCrewCount > 0)
+            {
+                float bonus = (effCrewCount - 1) * greenhouseEfficiencyPerCrew;
+                foreach (ModuleResourceConverter conv in part.FindModulesImplementing<ModuleResourceConverter>())
+                {
+                    conv.EfficiencyBonus = bonus;
+                }
+            }
+
+            // Emergency Oxygen Reserve
+            if (emergencyO2Enabled && o2Id >= 0 && emergencyO2Level > 0)
+            {
+                double demand = 0.005 * dt * vessel.GetCrewCount();
+                double released = System.Math.Min(emergencyO2Level, demand);
+                emergencyO2Level -= (float)released;
+
+                var o2res = part.Resources.Get(o2Id);
+                if (o2res != null) o2res.amount += released;
+            }
+
+            // CDRA saturation & regeneration
+            if (isCDRA && scrubberEnabled)
+            {
+                if (regenProgress > 0f)
+                {
+                    double regenEC = cdraRegenEC * dt;
+                    double taken = part.RequestResource(ecId, regenEC);
+                    if (taken >= regenEC * 0.99)
+                    {
+                        regenProgress -= cdraRegenRate * (float)dt;
+                        if (regenProgress <= 0f)
+                        {
+                            regenProgress = 0f;
+                            cdraSaturation = 0f;
+                            scrubberStatus = "Active";
+                        }
+                        else
+                        {
+                            scrubberStatus = $"Regen {regenProgress / cdraRegenRate:F0}s";
+                        }
+                    }
+                    else
+                    {
+                        scrubberStatus = "Regen - No Power";
+                    }
+                }
+                else if (cdraSaturation < 1f)
+                {
+                    cdraSaturation += cdraSaturationRate * crewCount * (float)dt;
+                    if (cdraSaturation > 1f) cdraSaturation = 1f;
+                }
+            }
+
+            // Air filter degradation
+            if (scrubberEnabled && filterCondition > 0f)
+            {
+                filterCondition -= filterDegradeRate * crewCount * (float)dt;
+                if (filterCondition < 0f) filterCondition = 0f;
+            }
+
+            // Show regen button when CDRA mode and saturation > 0
+            Events["RegenerateCDRA"].active = isCDRA && cdraSaturation > 0f && regenProgress == 0f;
+            Events["RegenerateCDRA"].guiActive = isCDRA && cdraSaturation > 0f && regenProgress == 0f;
+
+            // Show replace filter when filter is degraded
+            Events["ReplaceAirFilter"].active = filterCondition < 1f;
+            Events["ReplaceAirFilter"].guiActive = filterCondition < 1f;
 
             // Scrubber
             if (isCDRA)
@@ -411,6 +507,65 @@ namespace KickLifeSupport
             }
 
             return false;
+        }
+        #endregion
+
+        #region CO2 Vent Valve
+        [KSPEvent(guiActive = true, guiName = "Vent CO₂ Overboard", groupName = "KICKLS", groupDisplayName = "Life Support")]
+        public void VentCO2()
+        {
+            if (KickLifeSupportScenario.Instance != null)
+            {
+                LifeSupportStatus data = KickLifeSupportScenario.Instance.GetData(vessel.id);
+                double vented = data.cabinCO2;
+                data.cabinCO2 = 0;
+                cabinCO2 = 0;
+                ScreenMessages.PostScreenMessage($"Vented {vented:F1} L CO₂ overboard", 3f, ScreenMessageStyle.UPPER_CENTER);
+            }
+        }
+        #endregion
+
+        #region Emergency Oxygen Reserve
+        [KSPField(guiActive = true, guiActiveEditor = true, guiName = "Emergency O₂", groupName = "KICKLS", groupDisplayName = "Life Support")]
+        [UI_Toggle(disabledText = "Standby", enabledText = "Active")]
+        public bool emergencyO2Enabled = false;
+
+        [KSPField(isPersistant = true, guiActive = false)]
+        public float emergencyO2Level = 0f;
+        #endregion
+
+        #region CDRA Regeneration
+        [KSPEvent(guiActive = false, guiName = "Regenerate CDRA Beds", groupName = "KICKLS", groupDisplayName = "Life Support")]
+        public void RegenerateCDRA()
+        {
+            if (cdraSaturation <= 0f || regenProgress > 0f)
+            {
+                ScreenMessages.PostScreenMessage("CDRA beds are clean.", 2f, ScreenMessageStyle.UPPER_CENTER);
+                return;
+            }
+            regenProgress = cdraSaturation;
+            ScreenMessages.PostScreenMessage("CDRA regeneration started.", 3f, ScreenMessageStyle.UPPER_CENTER);
+        }
+
+        [KSPEvent(guiActive = false, guiName = "Replace Air Filter", groupName = "KICKLS", groupDisplayName = "Life Support")]
+        public void ReplaceAirFilter()
+        {
+            if (filterCondition >= 0.99f)
+            {
+                ScreenMessages.PostScreenMessage("Air filter is clean.", 2f, ScreenMessageStyle.UPPER_CENTER);
+                return;
+            }
+            double ecCost = 0.5;
+            double taken = part.RequestResource(ecId, ecCost);
+            if (taken >= ecCost * 0.99)
+            {
+                filterCondition = 1f;
+                ScreenMessages.PostScreenMessage("Air filter replaced.", 3f, ScreenMessageStyle.UPPER_CENTER);
+            }
+            else
+            {
+                ScreenMessages.PostScreenMessage("Not enough EC to replace filter.", 3f, ScreenMessageStyle.UPPER_CENTER);
+            }
         }
         #endregion
     }
