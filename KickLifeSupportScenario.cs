@@ -122,6 +122,8 @@ namespace KickLifeSupport
                 if (data.lastUpdateTime == 0)
                 {
                     data.lastUpdateTime = currentTime;
+                    if (v.vesselType == VesselType.EVA)
+                        EnsureEVAResources(v);
                     continue;
                 }
 
@@ -150,7 +152,7 @@ namespace KickLifeSupport
                 EatFood(v, data, deltaTime, liveCrew);
                 DrinkWater(v, data, deltaTime, liveCrew);
                 MonitorTemperature(v, data, deltaTime);
-
+                WarnLowResources(v, data, deltaTime);
                 CheckConditions(data, v);
 
                 // Redistribute CO2
@@ -1166,6 +1168,64 @@ namespace KickLifeSupport
 
             return actuallyAdded;
         }
+
+        void EnsureEVAResources(Vessel v)
+        {
+            if (!v.loaded) return;
+            foreach (Part p in v.parts)
+            {
+                TryAddResource(p, "Oxygen", 130, 130);
+                TryAddResource(p, "Food", 0.6, 0.6);
+                TryAddResource(p, "Water", 0.8, 0.8);
+            }
+        }
+
+        void TryAddResource(Part p, string name, double amount, double maxAmount)
+        {
+            PartResource res = p.Resources[name];
+            if (res == null)
+            {
+                ConfigNode node = new ConfigNode("RESOURCE");
+                node.AddValue("name", name);
+                node.AddValue("amount", amount);
+                node.AddValue("maxAmount", maxAmount);
+                p.AddResource(node);
+            }
+            else if (res.amount < amount)
+            {
+                res.amount = amount;
+                res.maxAmount = maxAmount;
+            }
+        }
+
+        void WarnLowResources(Vessel v, LifeSupportStatus status, double deltaTime)
+        {
+            if (v != FlightGlobals.ActiveVessel) return;
+            if (TimeWarp.WarpMode != TimeWarp.Modes.LOW) return;
+
+            int crew = GetLiveCrew(v);
+            if (crew == 0) return;
+
+            double o2 = GetResourceTotal(v, o2Id);
+            double o2Rate = o2RequestRate * crew;
+            double o2Minutes = o2Rate > 0 ? o2 / o2Rate / 60.0 : double.MaxValue;
+
+            // Stop timewarp if any resource is critically low
+            if (status.lowO2Time > 0 || o2Minutes < 2)
+            {
+                if (TimeWarp.CurrentRateIndex > 0)
+                    TimeWarp.SetRate(0, false);
+            }
+
+            // Warning message on transition to low O2
+            if (status.lowO2Time > 0 && status.lowO2Time - deltaTime <= 0)
+            {
+                ScreenMessages.PostScreenMessage(
+                    $"<color=#ff4444><b>LOW OXYGEN!</b></color> ~{o2Minutes:F0} min remaining",
+                    5f, ScreenMessageStyle.UPPER_CENTER);
+            }
+        }
+
         #endregion
 
         #region Crew Helpers
