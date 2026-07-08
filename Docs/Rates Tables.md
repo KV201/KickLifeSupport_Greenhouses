@@ -77,6 +77,7 @@ All greenhouses share the same inputs.
 | -------- | ---------- |
 | WasteWater | 0.00005 |
 | CarbonDioxide | 0.005 |
+| Fertilizer | 0.00025 (1.25m) / 0.0005 (2.5m) / 0.00075 (3.75m) / 0.001 (5m) |
 | ElectricCharge | 0.02 |
 
 ### Output by Size
