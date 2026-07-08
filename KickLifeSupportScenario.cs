@@ -1206,24 +1206,24 @@ namespace KickLifeSupport
             int crew = GetLiveCrew(v);
             if (crew == 0) return;
 
-            double o2 = GetResourceTotal(v, o2Id);
-            double o2Rate = o2RequestRate * crew;
-            double o2Minutes = o2Rate > 0 ? o2 / o2Rate / 60.0 : double.MaxValue;
+            // Stop timewarp if any resource is being depleted
+            bool shouldStop = status.lowO2Time > 0 || status.lowFoodTime > 0 || status.lowWaterTime > 0;
+            if (shouldStop && TimeWarp.CurrentRateIndex > 0)
+                TimeWarp.SetRate(0, false);
 
-            // Stop timewarp if any resource is critically low
-            if (status.lowO2Time > 0 || o2Minutes < 2)
-            {
-                if (TimeWarp.CurrentRateIndex > 0)
-                    TimeWarp.SetRate(0, false);
-            }
+            // Send one-time stock message when each resource first runs low
+            TrySendLowWarning(v, "Oxygen", status.lowO2Time, deltaTime);
+            TrySendLowWarning(v, "Food", status.lowFoodTime, deltaTime);
+            TrySendLowWarning(v, "Water", status.lowWaterTime, deltaTime);
+        }
 
-            // Warning message on transition to low O2
-            if (status.lowO2Time > 0 && status.lowO2Time - deltaTime <= 0)
-            {
-                ScreenMessages.PostScreenMessage(
-                    $"<color=#ff4444><b>LOW OXYGEN!</b></color> ~{o2Minutes:F0} min remaining",
-                    5f, ScreenMessageStyle.UPPER_CENTER);
-            }
+        void TrySendLowWarning(Vessel v, string resource, double lowTime, double deltaTime)
+        {
+            if (lowTime <= 0) return;
+            if (lowTime - deltaTime > 0) return; // only on first frame it goes positive
+
+            string msg = $"Vessel \"{v.vesselName}\" is low on \"{resource}\".";
+            ScreenMessages.PostScreenMessage(msg, 8f, ScreenMessageStyle.UPPER_CENTER);
         }
 
         #endregion
