@@ -49,6 +49,9 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 - CO₂ vent valve — 2 uses per craft, bring a scrubber!
 - EVA kerbals carry 130 O₂, 0.6 Food, 0.8 Water (7 hours).
 ## Supported Converters
+
+See Rates Tables.md
+
 ## Prerequesites
 - [KSP 1.12](https://store.steampowered.com/app/220200/Kerbal_Space_Program/)
 - [ModuleManager 4.2.3](https://forum.kerbalspaceprogram.com/topic/50533-18x-112x-module-manager-423-july-03th-2023-fireworks-season/)

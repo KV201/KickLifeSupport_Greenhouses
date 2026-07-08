@@ -13,33 +13,64 @@
 | CDRA     | CarbonDioxide | 0.005                    | N/A              | N/A                   | 0.5            | N/A          | N/A                 | 0.0075                 | EC rate is EC/s/seat |
 
 ## CDRA Regeneration
-| Parameter       | Rate          |
-| --------------- | ------------- |
-| EC Draw         | 2.5 EC/s      |
-| Duration        | ~5 min        |
-| Saturation Rate | 0.00028/s/crew |
+| Parameter       |  Rate                      |
+| --------------- |----------------------------|
+| EC Draw         | 2.5 EC/s                   |
+| Duration        | ~5 min                     |
+| Saturation Rate | 3.858e-7/s/crew (~30 days) |
 
 ## Air Filter
-| System    | Degrade Rate | Cost to Replace |
-| --------- | ------------ | --------------- |
-| Scrubber Filter | 0.00005/s/crew | 0.5 EC |
+| System    | Degrade Rate        | Cost to Replace |
+| --------- | ------------------- | --------------- |
+| Scrubber Filter | 3.858e-7/s/crew (~30 days) | 0.5 EC |
 
-## Water Purifier (KPBS)
-| Input        | Rate      | Output | Rate         | EC Cost |
-| ------------ | --------- | ------ | ------------ | ------- |
-| WasteWater   | 0.00005   | Water  | 0.000045 L/s | 0.05 EC/s |
+## Water Purifier
+| Input      | Rate      | Output | Rate         | EC Cost |
+| ---------- | --------- | ------ | ------------ | ------- |
+| WasteWater | 0.00005   | Water  | 0.000045 L/s | 0.05 EC/s |
+
+## Sabatier Reactor
+| Input        | Rate    | Output       | Rate    | EC Cost |
+| ------------ | ------- | ------------ | ------- | ------- |
+| CarbonDioxide | 0.01    | LiquidFuel   | 0.004   | 2.0 EC/s |
+|              |         | Oxidizer     | 0.005   |         |
+|              |         | Water        | 0.001   |         |
+
+## ISRU Water Extraction
+| Input   | Rate    | Output | Rate    | EC Cost |
+| ------- | ------- | ------ | ------- | ------- |
+| Ore     | 0.01    | Water  | 0.01    | 0.5 EC/s |
+| Hydrogen | 0.005  |        |         |         |
+
+## ISRU Waste Recycling
+| Input | Rate      | Output    | Rate    | EC Cost |
+| ----- | --------- | --------- | ------- | ------- |
+| Waste | 0.000018  | Fertilizer | 0.0005  | 0.2 EC/s |
+| Ore   | 0.001     |           |         |         |
+
+## Algae Farm (Stock Lab)
+| Input        | Rate    | Output | Rate    | EC Cost |
+| ------------ | ------- | ------ | ------- | ------- |
+| Water        | 0.00005 | Oxygen | 0.008   | 0.5 EC/s |
+| CarbonDioxide | 0.005   | Food   | 0.00002 |         |
+
+## Bioreactor (Moldavite Machines)
+| Input        | Rate      | Output    | Rate    | EC Cost |
+| ------------ | --------- | --------- | ------- | ------- |
+| CarbonDioxide | 0.005     | Fertilizer | 0.0005  | 0.5 EC/s |
+| Waste        | 0.000018  | Oxygen    | 0.004   |         |
 
 ## Emergency O2 Reserve
 | Parameter   | Value         |
 | ----------- | ------------- |
-| Reserve Size | 100 L (default) |
+| Reserve Size | 100 L (fixed, one-time use) |
 | Release Rate | 0.005 L/s/kerb |
 
 ## CO2 Vent Valve
-Instantly vents all cabin CO2. No resource cost.
+Dumps all stored CarbonDioxide resource overboard. Limited to 2 uses per craft — bring a scrubber!
 
 ## Greenhouse Systems
-All greenhouses share the same inputs. Output is flat (no crew scaling) and scales by part size.
+All greenhouses share the same inputs.
 
 ### Input (all sizes)
 | Resource | Rate (L/s) |
@@ -49,14 +80,14 @@ All greenhouses share the same inputs. Output is flat (no crew scaling) and scal
 | ElectricCharge | 0.02 |
 
 ### Output by Size
-| Size | Part Diameter | Parts | O2 (L/s) | Food (L/s) | Water (L/s) | Kerbals Supported |
-| ---- | ------------- | ----- | -------- | ---------- | ----------- | ----------------- |
-| Small | 1.25m | cupola greenhouse | 0.01 | 0.00004 | 0.00006 | ~2 |
-| Medium | 2.5m | greenhouse, KKAOSS Greenhouse | **0.02** | 0.00008 | 0.00012 | **4** |
-| Large | 3.75m | greenhouse, aquaculture | 0.03 | 0.00012 | 0.00018 | ~6 |
-| Extra-Large | 5m | greenhouse, dome greenhouse | 0.04 | 0.00016 | 0.00024 | ~8 |
+| Size | Part Diameter | O2 (L/s) | Food (L/s) | Water (L/s) | Kerbals Supported |
+| ---- | -------------  | -------- | ---------- | ----------- | ----------------- |
+| Small | 1.25m | 0.01 | 0.00004 | 0.00006 | ~2 |
+| Medium | 2.5m | **0.02** | 0.00008 | 0.00012 | **4** |
+| Large | 3.75m | 0.03 | 0.00012 | 0.00018 | ~6 |
+| Extra-Large | 5m | 0.04 | 0.00016 | 0.00024 | ~8 |
 
-Output is flat — does not scale with crew count. All greenhouse parts include a CDRA scrubber.
+All greenhouse parts include a CDRA scrubber.
 
 ## Electrical Systems
 | System          | EC Rate (EC/s) | Thermal Flux (kW) | Notes                                                                                 |
