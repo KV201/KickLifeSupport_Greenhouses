@@ -168,8 +168,11 @@ namespace KickLifeSupport
                 return false;
             }
 
-            // TODO: EVA life support?
-            if (vessel.vesselType == VesselType.EVA) return false;
+            if (vessel.vesselType == VesselType.EVA)
+            {
+                // EVA has no cabin — skip CO2/scrubber/climate
+                return true;
+            }
 
             if (vessel.state == Vessel.State.DEAD) return false;
 
@@ -1157,12 +1160,17 @@ namespace KickLifeSupport
 
         int GetLiveCrew(Vessel v)
         {
-            // KSP API handles counting crew for both Loaded and Unloaded vessels automatically
+            if (v.vesselType == VesselType.EVA)
+                return v.GetCrewCount() > 0 ? v.GetCrewCount() : 1;
+
             return v.GetCrewCount();
         }
 
         int GetCrewCapacity(Vessel v)
         {
+            if (v.vesselType == VesselType.EVA)
+                return 1;
+
             if (v.loaded)
             {
                 return v.GetCrewCapacity();
@@ -1185,6 +1193,17 @@ namespace KickLifeSupport
 
         void KillCrew(Vessel v)
         {
+            if (v.vesselType == VesselType.EVA)
+            {
+                var crew = v.GetVesselCrew();
+                if (crew != null && crew.Count > 0)
+                {
+                    crew[0].rosterStatus = ProtoCrewMember.RosterStatus.Dead;
+                }
+                v.Die();
+                return;
+            }
+
             // 1. Get a copy of the crew list
             // (We need a copy because we are about to modify the vessel's crew list)
             List<ProtoCrewMember> crewList = new List<ProtoCrewMember>(v.GetVesselCrew());
