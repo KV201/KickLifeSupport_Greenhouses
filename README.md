@@ -37,11 +37,16 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 ### Other Features
 - Background Processing - Unloaded/on-rails ships continue to work.
 - Small amounts of resource per pod - if you need more, bring it with you.
+- Filter Degredation and CDRA saturation - So you have to replace them every 30 days
+- CO₂ vent to dump - But only 2 times, So bring a scrubber or CDRA with you!
 ## Prerequesites
 - [KSP 1.12](https://store.steampowered.com/app/220200/Kerbal_Space_Program/)
 - [ModuleManager 4.2.3](https://forum.kerbalspaceprogram.com/topic/50533-18x-112x-module-manager-423-july-03th-2023-fireworks-season/)
 - [Community Resource Pack](https://github.com/UmbraSpaceIndustries/CommunityResourcePack/releases)
 ## Compatibility/Recommended Mods
+- [Kerbal Planetary Base Systems](https://forum.kerbalspaceprogram.com/topic/133606-112x-kerbal-planetary-base-systems-v1615-28-april-2022/)
+- [Stockalike Station Parts Expansion Redux](https://spacedock.info/mod/1682/Stockalike%20Station%20Parts%20Expansion%20Redux)
+- [Moldavite Machines](https://forum.kerbalspaceprogram.com/topic/208988-112x-moldavite-machines-15-mar-19-2026/)
 - [Real Fuels](https://forum.kerbalspaceprogram.com/topic/58236-18-real-fuels/)
 - [Universal Storage 2](https://spacedock.info/mod/2960/Universal%20Storage%20II%20Finalized)
 - [System Heat](https://forum.kerbalspaceprogram.com/topic/193909-112x-systemheat-a-replacement-for-the-coreheat-system-july-21/)
@@ -58,7 +63,7 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 	- Radiation damage/death
 - Sleep cycles?
 - Meal times?
-- EVA life support
+- ~~EVA life support~~
 - DangIt! support
 - kOS support (Addon, thermal support)
 - MechJeb2 support (thermal)
