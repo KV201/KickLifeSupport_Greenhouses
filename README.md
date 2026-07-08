@@ -76,6 +76,7 @@ See Rates Tables.md
 
 ## Known Bugs
 - Scrubber heat generation is currently much lower than intended due to a calculation bug. This will be fixed in a future update.
+- Sometimes Kerbals on EVA do not disappear when out of LS
 
 ## Roadmap & Upcoming Features
 - UI for background processing
