@@ -16,6 +16,7 @@ namespace KickLifeSupport
         KickLifeSupportSettings gameSettings;
 
         public Dictionary<Guid, LifeSupportStatus> database = new Dictionary<Guid, LifeSupportStatus>();
+        private List<Vessel> pendingDestroyVessels = new List<Vessel>();
 
         /// <summary>
         /// The total amount of air in liters per seat
@@ -101,6 +102,14 @@ namespace KickLifeSupport
 
         public void FixedUpdate()
         {
+            // Destroy any EVA vessels queued from the previous frame
+            foreach (Vessel ev in pendingDestroyVessels)
+            {
+                if (ev != null && ev.gameObject != null)
+                    ev.Die();
+            }
+            pendingDestroyVessels.Clear();
+
             double currentTime = Planetarium.GetUniversalTime();
 
             foreach (Vessel v in FlightGlobals.Vessels)
@@ -160,6 +169,8 @@ namespace KickLifeSupport
         bool IsValidVessel(Vessel vessel)
         {
             if (vessel == null) return false;
+            if (vessel.state == Vessel.State.DEAD) return false;
+            if (vessel.gameObject == null) return false;
 
             if ((vessel.vesselType == VesselType.Debris) ||
                 (vessel.vesselType == VesselType.Flag) ||
@@ -1205,10 +1216,8 @@ namespace KickLifeSupport
                 if (kerbal != null)
                     kerbal.rosterStatus = ProtoCrewMember.RosterStatus.Dead;
 
-                // Reclassify as debris so we stop processing it
-                v.vesselType = VesselType.Debris;
-                v.Die();
-
+                // Queue for destruction (deferred to avoid modifying vessel list during iteration)
+                pendingDestroyVessels.Add(v);
                 database.Remove(v.id);
                 return;
             }
