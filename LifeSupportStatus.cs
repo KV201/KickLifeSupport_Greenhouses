@@ -38,6 +38,8 @@ namespace KickLifeSupport
         public int activeCDRAScrubberCount = 0;
         public int activeLiOHScrubberCount = 0;
 
+        public int co2VentsRemaining = 2;
+
         public void Save(ConfigNode node)
         {
             node.AddValue("CabinCO2", cabinCO2);
@@ -49,6 +51,7 @@ namespace KickLifeSupport
             node.AddValue("LowFoodTime", lowFoodTime);
             node.AddValue("LowClimateTime", lowClimateTime);
             node.AddValue("TempRangeTime", tempRangeTime);
+            node.AddValue("CO2VentsRemaining", co2VentsRemaining);
         }
 
         public void Load(ConfigNode node)
@@ -62,6 +65,7 @@ namespace KickLifeSupport
             double.TryParse(node.GetValue("LowFoodTime"), out lowFoodTime);
             double.TryParse(node.GetValue("LowClimateTime"), out lowClimateTime);
             double.TryParse(node.GetValue("TempRangeTime"), out tempRangeTime);
+            int.TryParse(node.GetValue("CO2VentsRemaining"), out co2VentsRemaining);
         }
     }
 }

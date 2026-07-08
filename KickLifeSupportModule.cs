@@ -123,6 +123,9 @@ namespace KickLifeSupport
             else
                 return;
 
+            if (!Events["VentCO2"].guiName.Contains("("))
+                Events["VentCO2"].guiName = $"Vent CO2 Overboard ({data.co2VentsRemaining} left)";
+
             if (cabinTemp == 0 || cabinTemp < -200)
             {
                 cabinTemp = (float)(KToC(part.temperature));
@@ -498,6 +501,13 @@ namespace KickLifeSupport
         [KSPEvent(guiActive = true, guiName = "Vent CO2 Overboard", groupName = "KICKLS", groupDisplayName = "Life Support")]
         public void VentCO2()
         {
+            if (KickLifeSupportScenario.Instance == null) return;
+            LifeSupportStatus data = KickLifeSupportScenario.Instance.GetData(vessel.id);
+            if (data.co2VentsRemaining <= 0)
+            {
+                ScreenMessages.PostScreenMessage("CO2 vent valve expended — no uses remaining.", 3f, ScreenMessageStyle.UPPER_CENTER);
+                return;
+            }
             double vented = 0;
             if (co2Id < 0) return;
             foreach (Part p in vessel.parts)
@@ -514,13 +524,11 @@ namespace KickLifeSupport
                 ScreenMessages.PostScreenMessage("No CO2 to vent.", 3f, ScreenMessageStyle.UPPER_CENTER);
                 return;
             }
-            if (KickLifeSupportScenario.Instance != null)
-            {
-                LifeSupportStatus data = KickLifeSupportScenario.Instance.GetData(vessel.id);
-                data.cabinCO2 = 0;
-            }
+            data.cabinCO2 = 0;
             cabinCO2 = 0;
-            ScreenMessages.PostScreenMessage($"Vented {vented:F1} L CO2 overboard", 3f, ScreenMessageStyle.UPPER_CENTER);
+            data.co2VentsRemaining--;
+            Events["VentCO2"].guiName = $"Vent CO2 Overboard ({data.co2VentsRemaining} left)";
+            ScreenMessages.PostScreenMessage($"Vented {vented:F1} L CO2 overboard — {data.co2VentsRemaining} uses left.", 3f, ScreenMessageStyle.UPPER_CENTER);
         }
         #endregion
 
