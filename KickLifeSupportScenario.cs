@@ -1204,7 +1204,6 @@ namespace KickLifeSupport
         void WarnLowResources(Vessel v, LifeSupportStatus status, double deltaTime)
         {
             if (v != FlightGlobals.ActiveVessel) return;
-            if (TimeWarp.WarpMode != TimeWarp.Modes.LOW) return;
 
             int crew = GetLiveCrew(v);
             if (crew == 0) return;
