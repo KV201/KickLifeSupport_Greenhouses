@@ -14,11 +14,19 @@ Kerbals eat `Food` and drink `Water`, producing `Waste` and `WasteWater`. There 
 Kerbals breath `Oxygen` and then exhale `CarbonDioxide`. Unlike other life support mods, `CarbonDioxide` isn't stored in a tank; it builds up in the cabin air. In zero-G, it can form "bubbles" and needs to be stirred throughout the cabin. A cabin fan (part of the `Climate Control` system) keeps the air circulating to prevent CO2 from collecting in one spot. 
 #### CO2 Scrubber
 To eliminate `CarbonDioxide`, a Command Pod is equipped with either a Lithium Hydroxide Scrubber or a CDRA (Carbon Dioxide Removal Assembly).
--The Lithium Hydroxide Scrubber pulls the cabin air through a LiOH canister using a fan, using a little bit of EC and generating a lot of heat. LiOH is provided by a canister. One `LiOH Scrubber Canister` gives enough LiOH for about 9 hours per Kerbal -- 4.5 hours for two Kerbals, and 3 hours for three Kerbals. That means you need to bring extras if you're having a long mission. Store them in your Command Pod's inventory (they won't be pulled from a Kerbal's inventory). When the cabin runs out of LiOH, you can reload the scrubber if you have a canister onboard. The old canister's volume is converted to Waste stored in the Command Pod's waste tank. As LiOH gets used, it also becomes waste. The scrubber is EC-dependent and will only work if there's power to run the fan.
--The CDRA pulls cabin air through a pair of beds that collect CO2, then the beds have to be heated to release the CO2 and send it overboard (or to a tank if you plan to collect it). The CDRA uses a lot of power but generates less heat.
-***The CDRA is new, and a bug fix adjusted some of the thermal generation for LiOH scrubbers. The existing settings for EC consumption and heat generation are very untested and potentially unbalanced. If you have any problems, please let me know.***
+- **LiOH Scrubber** pulls cabin air through a LiOH canister using a fan, consuming EC and generating heat. One canister lasts ~9 hours per Kerbal. When empty, reload from inventory via the `Reload Scrubber` button. Spent LiOH becomes waste.
+- **CDRA** uses zeolite beds to capture CO2 without consumables. Beds saturate over time (~30 days runtime) and must be regenerated via a ~5 min cycle consuming 2.5 EC/s. The extracted CO2 is stored as a resource.
+- **CO₂ Vent Valve** dumps all stored CO₂ overboard. Limited to 2 uses per craft.
+- **Air Filter** degrades over ~30 days of scrubber runtime. Replace via PAW button (costs 0.5 EC).
+
+### CDRA Regeneration
+When the zeolite beds are saturated (100%), scrubbing stops. Click `Regenerate CDRA Beds` to start a ~5 minute regeneration cycle consuming 2.5 EC/s. The module is unavailable during regen.
+
+### Emergency O₂ Reserve
+Toggleable emergency reserve on all LS-equipped parts. Releases O₂ at 0.005 L/s/kerb until depleted (100 L default). Activate via PAW toggle.
+
 ### Temperature Control
-Space is cold, and without something generating heat, the cabin temperature can drop dangerously low. Luckily, a spacecraft is just chock full of heat sources. For one, Kerbals themselves generate body heat. The CO2 scrubber also generates heat when it's in use. Command Pod electronics also generate heat, such as the avionics package, the SAS and RCS computers, and even the environmental control system itself. A cabin heater is used in combination with a thermostat to keep the cabin at a comfortable 22 degrees Celsius. If the temperature climbs dangerously high, radiators can be automatically deployed.
+Space is cold, and without something generating heat, the cabin temperature can drop dangerously low. Luckily, a spacecraft is just chock full of heat sources. For one, Kerbals themselves generate body heat. The CO2 scrubber also generates heat when it's in use. Command Pod electronics also generate heat, such as the avionics package, the SAS and RCS computers, and even the environmental control system itself. A cabin heater is used in combination with a thermostat to keep the cabin at a comfortable 22 degrees Celsius. If the temperature climbs dangerously high, radiators can be automatically deployed. Heat transfer between cabin air and hull is per-part — place radiators on or near crew modules for best cooling.
 ### ElectricCharge and Electronics
 Almost everything onboard that is part of the life support system requires EC to run it.
 
@@ -26,7 +34,7 @@ The entire Command Pod uses an Avionics package to allow command and control to 
 
 SAS and RCS also have independent electronics that are on when they are enabled (even if the stability wheels aren't running and the RCS isn't firing). Those electronics now run off of EC and generate a small amount of heat when they are turned on.
 
-**WARNING:** This mod significantly increases power consumption to realistic levels. A standard Command Pod battery will only last about **20 minutes** with all systems active. You **must** plan for power generation (Solar/Fuel Cells) even for short trips, or *lots* of battery.
+**WARNING:** This mod significantly increases power consumption to realistic levels. A standard Command Pod battery will only last about **20 minutes** with all systems active. You **must** plan for power generation (Solar/Fuel Cells) even for short trips, or *lots* of battery.
 ### Causes of Death
 - **CO2 Toxicity:** Immediate death if Cabin CO2 reaches 10%.
 - **Suffocation:** Death if Oxygen runs out (Grace period: 2 minutes).
@@ -37,8 +45,10 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 ### Other Features
 - Background Processing - Unloaded/on-rails ships continue to work.
 - Small amounts of resource per pod - if you need more, bring it with you.
-- Filter Degredation and CDRA saturation - So you have to replace them every 30 days
-- CO₂ vent to dump - But only 2 times, So bring a scrubber or CDRA with you!
+- Filter degradation and CDRA saturation — replace every ~30 days
+- CO₂ vent valve — 2 uses per craft, bring a scrubber!
+- EVA kerbals carry 130 O₂, 0.6 Food, 0.8 Water (7 hours).
+## Supported Converters
 ## Prerequesites
 - [KSP 1.12](https://store.steampowered.com/app/220200/Kerbal_Space_Program/)
 - [ModuleManager 4.2.3](https://forum.kerbalspaceprogram.com/topic/50533-18x-112x-module-manager-423-july-03th-2023-fireworks-season/)
@@ -50,11 +60,11 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 - [Real Fuels](https://forum.kerbalspaceprogram.com/topic/58236-18-real-fuels/)
 - [Universal Storage 2](https://spacedock.info/mod/2960/Universal%20Storage%20II%20Finalized)
 - [System Heat](https://forum.kerbalspaceprogram.com/topic/193909-112x-systemheat-a-replacement-for-the-coreheat-system-july-21/)
+- [Moldavite Machines](https://forum.kerbalspaceprogram.com/topic/208988-112x-moldavite-machines-15-mar-19-2026/)
 ## Known Bugs
 - Scrubber heat generation is currently much lower than intended due to a calculation bug. This will be fixed in a future update.
 ## Roadmap & Upcoming Features
 - UI for background processing
-- ~~Carbon Dioxide Removal Assembly (CDRA) - Instead of only using a LiOH scrubber, the CDRA will extract CO2 to allow for storage (or dumping overboard).~~ (DONE)
 - Pressurization system
 - Humidity from exhalation and the LiOH scrubber
 - Radiation belt and solar radiation
@@ -68,3 +78,4 @@ SAS and RCS also have independent electronics that are on when they are enabled 
 - kOS support (Addon, thermal support)
 - MechJeb2 support (thermal)
 - Atmospheric equalization on nitrogen/oxygen surfaces
+- KSPedia entries
