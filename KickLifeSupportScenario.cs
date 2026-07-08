@@ -17,6 +17,7 @@ namespace KickLifeSupport
 
         public Dictionary<Guid, LifeSupportStatus> database = new Dictionary<Guid, LifeSupportStatus>();
         private List<Vessel> pendingDestroyVessels = new List<Vessel>();
+        private HashSet<Guid> pendingDestroyIds = new HashSet<Guid>();
 
         /// <summary>
         /// The total amount of air in liters per seat
@@ -109,6 +110,7 @@ namespace KickLifeSupport
                     ev.Die();
             }
             pendingDestroyVessels.Clear();
+            pendingDestroyIds.Clear();
 
             double currentTime = Planetarium.GetUniversalTime();
 
@@ -171,6 +173,7 @@ namespace KickLifeSupport
         bool IsValidVessel(Vessel vessel)
         {
             if (vessel == null) return false;
+            if (pendingDestroyIds.Contains(vessel.id)) return false;
             if (vessel.state == Vessel.State.DEAD) return false;
             if (vessel.gameObject == null) return false;
 
@@ -1278,6 +1281,7 @@ namespace KickLifeSupport
 
                 // Queue for destruction (deferred to avoid modifying vessel list during iteration)
                 pendingDestroyVessels.Add(v);
+                pendingDestroyIds.Add(v.id);
                 database.Remove(v.id);
                 return;
             }

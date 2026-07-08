@@ -230,7 +230,7 @@ namespace KickLifeSupport
             // Emergency Oxygen Reserve
             if (emergencyO2Enabled && o2Id >= 0 && emergencyO2Level > 0)
             {
-                double demand = 0.005 * dt * vessel.GetCrewCount();
+                double demand = 0.5 * dt * vessel.GetCrewCount();
                 double released = System.Math.Min(emergencyO2Level, demand);
                 emergencyO2Level -= (float)released;
 

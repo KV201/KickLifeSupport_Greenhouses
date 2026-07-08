@@ -64,7 +64,7 @@
 | Parameter   | Value         |
 | ----------- | ------------- |
 | Reserve Size | 100 L (fixed, one-time use) |
-| Release Rate | 0.005 L/s/kerb |
+| Release Rate | 0.5 L/s/kerb (lasts ~3.3 min) |
 
 ## CO2 Vent Valve
 Dumps all stored CarbonDioxide resource overboard. Limited to 2 uses per craft — bring a scrubber!
