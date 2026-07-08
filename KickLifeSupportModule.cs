@@ -63,10 +63,10 @@ namespace KickLifeSupport
         [KSPField(isPersistant = true, guiActive = false)]
         public float regenProgress = 0f;
 
-        public const float cdraSaturationRate = 0.00028f;
+        public const float cdraSaturationRate = 3.858e-7f;
         public const float cdraRegenRate = 0.0033f;
         public const float cdraRegenEC = 2.5f;
-        public const float filterDegradeRate = 0.00005f;
+        public const float filterDegradeRate = 3.858e-7f;
         #endregion
 
         public override void OnStart(StartState state)

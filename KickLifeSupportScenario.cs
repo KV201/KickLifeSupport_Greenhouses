@@ -60,10 +60,10 @@ namespace KickLifeSupport
         float scrubberECRequestRate;
 
         // CDRA constants
-        const float cdraSaturationRate = 0.00028f;
+        const float cdraSaturationRate = 3.858e-7f;
         const float cdraRegenRate = 0.0033f;
         const float cdraRegenEC = 2.5f;
-        const float filterDegradeRate = 0.00005f;
+        const float filterDegradeRate = 3.858e-7f;
 
         // Grace Periods
         float graceO2;
