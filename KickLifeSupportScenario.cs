@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using UnityEngine;
 
@@ -1195,12 +1196,20 @@ namespace KickLifeSupport
         {
             if (v.vesselType == VesselType.EVA)
             {
-                var crew = v.GetVesselCrew();
-                if (crew != null && crew.Count > 0)
-                {
-                    crew[0].rosterStatus = ProtoCrewMember.RosterStatus.Dead;
-                }
+                // EVA kerbals: GetVesselCrew() may be empty, fall back to roster lookup
+                var evaCrew = v.GetVesselCrew();
+                ProtoCrewMember kerbal = (evaCrew != null && evaCrew.Count > 0)
+                    ? evaCrew[0]
+                    : FindKerbalByName(v.vesselName);
+
+                if (kerbal != null)
+                    kerbal.rosterStatus = ProtoCrewMember.RosterStatus.Dead;
+
+                // Reclassify as debris so we stop processing it
+                v.vesselType = VesselType.Debris;
                 v.Die();
+
+                database.Remove(v.id);
                 return;
             }
 
@@ -1257,6 +1266,19 @@ namespace KickLifeSupport
             {
                 GameEvents.onVesselChange.Fire(v);
             }
+        }
+
+        ProtoCrewMember FindKerbalByName(string name)
+        {
+            var roster = HighLogic.CurrentGame.CrewRoster;
+            foreach (ProtoCrewMember c in roster.Crew)
+                if (c.name == name) return c;
+            foreach (ProtoCrewMember c in roster.Tourist)
+                if (c.name == name) return c;
+            foreach (ProtoCrewMember c in roster.Applicants)
+                if (c.name == name) return c;
+
+            return null;
         }
 
         #endregion
