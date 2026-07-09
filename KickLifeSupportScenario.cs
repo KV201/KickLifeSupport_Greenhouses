@@ -18,6 +18,7 @@ namespace KickLifeSupport
         public Dictionary<Guid, LifeSupportStatus> database = new Dictionary<Guid, LifeSupportStatus>();
         private List<Vessel> pendingDestroyVessels = new List<Vessel>();
         private HashSet<Guid> pendingDestroyIds = new HashSet<Guid>();
+        private HashSet<string> warnedResources = new HashSet<string>();
 
         /// <summary>
         /// The total amount of air in liters per seat
@@ -1208,21 +1209,26 @@ namespace KickLifeSupport
             int crew = GetLiveCrew(v);
             if (crew == 0) return;
 
-            // Stop timewarp if any resource is being depleted
-            bool shouldStop = status.lowO2Time > 0 || status.lowFoodTime > 0 || status.lowWaterTime > 0;
-            if (shouldStop && TimeWarp.CurrentRateIndex > 0)
-                TimeWarp.SetRate(0, false);
-
-            // Send one-time stock message when each resource first runs low
-            TrySendLowWarning(v, "Oxygen", status.lowO2Time, deltaTime);
-            TrySendLowWarning(v, "Food", status.lowFoodTime, deltaTime);
-            TrySendLowWarning(v, "Water", status.lowWaterTime, deltaTime);
+            TrySendLowWarning(v, "Oxygen", o2Id, status.lowO2Time, deltaTime);
+            TrySendLowWarning(v, "Food", foodId, status.lowFoodTime, deltaTime);
+            TrySendLowWarning(v, "Water", waterId, status.lowWaterTime, deltaTime);
         }
 
-        void TrySendLowWarning(Vessel v, string resource, double lowTime, double deltaTime)
+        void TrySendLowWarning(Vessel v, string resource, int resourceId, double lowTime, double deltaTime)
         {
-            if (lowTime <= 0) return;
-            if (lowTime - deltaTime > 0) return; // only on first frame it goes positive
+            double remaining = GetResourceTotal(v, resourceId);
+
+            // Trigger if depleted (just went to 0) OR below 0.5 threshold
+            bool isDepleted = lowTime > 0 && lowTime - deltaTime <= 0;
+            bool isLow = remaining > 0 && remaining <= 0.5;
+
+            if (!isDepleted && !isLow) return;
+
+            string key = v.id.ToString() + ":" + resource;
+            if (!warnedResources.Add(key)) return; // already warned
+
+            if (TimeWarp.CurrentRateIndex > 0)
+                TimeWarp.SetRate(0, false);
 
             string msg = $"Vessel \"{v.vesselName}\" is low on \"{resource}\".";
             ScreenMessages.PostScreenMessage(msg, 8f, ScreenMessageStyle.UPPER_CENTER);
