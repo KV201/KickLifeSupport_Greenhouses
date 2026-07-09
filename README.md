@@ -73,6 +73,7 @@ See Rates Tables.md
 - [Universal Storage 2](https://spacedock.info/mod/2960/Universal%20Storage%20II%20Finalized)
 - [System Heat](https://forum.kerbalspaceprogram.com/topic/193909-112x-systemheat-a-replacement-for-the-coreheat-system-july-21/)
 - [Moldavite Machines](https://forum.kerbalspaceprogram.com/topic/208988-112x-moldavite-machines-15-mar-19-2026/)
+- [On Demand Fuel Cells](https://forum.kerbalspaceprogram.com/topic/187625-ksp-1124-on-demand-fuel-cells-odfc-12991-prerelease-edition-26-dec-2022/)
 
 ## Known Bugs
 - Scrubber heat generation is currently much lower than intended due to a calculation bug. This will be fixed in a future update.
