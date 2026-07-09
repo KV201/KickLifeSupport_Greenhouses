@@ -7,12 +7,12 @@ Kerbals consume `Food` at a rate of 0.00002 L/s/kerb (0.072 L/hour/kerb; 0.432 L
 ## Water -> WasteWater
 Kerbals consume `Water` at a rate of 0.00003 L/s/kerb (0.108 L/hour/kerb; 0.648 L/day/kerb). `Water` is digested into `WasteWater`, which is collected in an onboard tank. `WasteWater` can be pumped out to a disposal spacecraft or released into space via an `FTE-1 Drain Valve` or similar.
 ## Greenhouses
-Greenhouses convert `WasteWater + CO2 + EC → O2 + Food + Water`. Output is flat (no crew scaling) and scales by part size.
+Greenhouses convert `WasteWater + CO2 + EC → O2 + Food + Water`.
 
 | Size | O2 (L/s) | Food (L/s) | Water (L/s) | Kerbals Supported |
 | ---- | -------- | ---------- | ----------- | ----------------- |
 | Small (1.25m) | 0.01 | 0.00004 | 0.00006 | ~2 |
-| Medium (2.5m) | **0.02** | 0.00008 | 0.00012 | **4** |
+| Medium (2.5m) | 0.02 | 0.00008 | 0.00012 | ~4 |
 | Large (3.75m) | 0.03 | 0.00012 | 0.00018 | ~6 |
 | XL (5m) | 0.04 | 0.00016 | 0.00024 | ~8 |
 
